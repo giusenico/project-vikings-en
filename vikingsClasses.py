@@ -6,7 +6,7 @@ class Soldier:
     def __init__(self, health, strength):
         self.health = health
         self.strength = strength
-    
+
     def attack(self):
         return self.strength
 
@@ -20,6 +20,7 @@ class Viking(Soldier):
     def __init__(self, name, health, strength):
         super().__init__(health, strength)
         self.name = name
+        self.max_health_viking = health
 
     def battleCry(self):
         return "Odin Owns You All!"
@@ -63,27 +64,41 @@ class War():
         self.saxonArmy.append(saxon)
     
     def vikingAttack(self):
+        if not self.saxonArmy:
+            return "No Saxons left to attack!"
+        
         chosen_saxon = random.choice(self.saxonArmy)
         chosen_viking = random.choice(self.vikingArmy)
-        output_message = chosen_saxon.receiveDamage(chosen_viking.attack())
+        
+        # health check of the chosen Viking, and then decide whether to increase the damage
+        if chosen_viking.health <= (chosen_viking.max_health_viking * 0.3):
+            damage = chosen_viking.attack() * 2
+            print(f"Viking {chosen_viking.name} has less than 30 percent of life, this attack deals double the damage")
+        else:
+            damage = chosen_viking.attack()
+        output_message = chosen_saxon.receiveDamage(damage)
 
         if chosen_saxon.health <= 0:
             self.saxonArmy.remove(chosen_saxon)
-
-        #self.saxonArmy = [saxon for saxon in self.saxonArmy if saxon.heath > 0]
+            print(f"a Saxon has been slain by Viking {chosen_viking.name} with {damage} damage.")
 
         return output_message
 
-    
     def saxonAttack(self):
+        if not self.vikingArmy:
+            return "No Vikings left to attack!"
+        
         chosen_saxon = random.choice(self.saxonArmy)
         chosen_viking = random.choice(self.vikingArmy)
-        output_message = chosen_viking.receiveDamage(chosen_saxon.attack())
+        damage = chosen_saxon.attack()
+        output_message = chosen_viking.receiveDamage(damage)
 
         if chosen_viking.health <= 0:
             self.vikingArmy.remove(chosen_viking)
+            print(f"Viking {chosen_viking.name} has been slain by Saxon with {damage} damage.")
 
         return output_message
+
 
     def showStatus(self):
         if len(self.saxonArmy) == 0:
