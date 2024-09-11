@@ -1,6 +1,7 @@
 from vikingsClasses import Soldier, Viking, Saxon, War
 import random
 import time
+import pygame
 
 # Display info
 def display_round_info(round, war):
@@ -17,6 +18,36 @@ def generate_war_name():
     nouns = ["Battle of the Plains", "Siege of the North", "Clash of Titans", "War of the Ages", "Skirmish of Honor"]
     return f"{random.choice(adjectives)} {random.choice(nouns)}"
 
+# Initialize pygame
+pygame.init()
+
+# play sound during random event
+try:
+    lightening_sound = pygame.mixer.Sound("thunder.mp3")
+    earthquake_sound = pygame.mixer.Sound("earthquake.mp3")
+    acid_rain_sound = pygame.mixer.Sound("rain.mp3")
+    tornado_sound = pygame.mixer.Sound("tornado.mp3")
+    print("Sounds loaded successfully.")
+except pygame.error as e:
+    print(f"Error loading sound files: {e}")
+
+def stop_event_sounds():
+    lightening_sound.stop()
+    earthquake_sound.stop()
+    acid_rain_sound.stop()
+    tornado_sound.stop()
+
+def play_event_sound(event):
+    stop_event_sounds()  # Stop any sound that's currently playing
+    if event == "A lightning strike hits the battlefield.":
+        lightening_sound.play(loops=-1)
+    elif event == "An earthquake shakes the battlefield.":
+        earthquake_sound.play(loops=-1)
+    elif event == "Acid rain is pouring into the battlefield.":
+        acid_rain_sound.play(loops=-1)
+    elif event == "A tornado appears out of nowhere.":
+        tornado_sound.play(loops=-1)
+
 # Generate random events for each round
 def random_event(war):
     events = [
@@ -29,6 +60,9 @@ def random_event(war):
     ]
     event = random.choice(events)
     print(f"\nRandom event: {event}")
+
+    # Play the appropriate sound
+    play_event_sound(event)
 
     # A lightning strike hits the battlefield
     if event == "A lightning strike hits the battlefield.":
@@ -107,6 +141,7 @@ def random_event(war):
         for saxon in war.saxonArmy:
             saxon.health = 100
         print("\nThe sun has revitalized both armies, restoring their health to 100!")
+    
 
 # Display soldiers before selection
 def display_all_soldiers(soldiers_list, army_name):
